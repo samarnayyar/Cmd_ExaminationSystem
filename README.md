@@ -1,6 +1,6 @@
 # Online Examination System
 
-The Online Examination System is a Java-based application that allows admins to create exams and students to take them. It has features such as secure login, role-based access, and automatic evaluation of MCQ exams using a modular, object-oriented design.
+This project is a console-based Online Examination System built in Java. It streamlines the exam process by providing separate functionalities for admins and students, supporting secure logins, question management, and instant result generation in a clean, modular structure.
 
 ## 🔧 Features
 
