@@ -40,7 +40,7 @@ FinalProject/
 
 2. Compile the program:
    ```bash  
-    javac -d bin src/auth/*.java src/users/*.java src/exams/*.java src/main/*.java
+   javac -d bin src/auth/*.java src/users/*.java src/exams/*.java src/main/*.java
    ```
 
 3. Run the application:
