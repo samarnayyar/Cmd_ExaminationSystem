@@ -35,7 +35,7 @@ FinalProject/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/samarnayyar/OnlineExaminationSystem.git
+   https://github.com/samarnayyar/OnlineExaminationSystem.git
    ```
 
 2. Compile the program:
