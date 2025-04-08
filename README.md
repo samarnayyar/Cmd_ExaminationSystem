@@ -2,7 +2,7 @@
 
 This project is a console-based Online Examination System built in Java. It streamlines the exam process by providing separate functionalities for admins and students, supporting secure logins, question management, and instant result generation in a clean, modular structure.
 
-## 🔧 Features
+## Features
 
 - Secure login system for Admin and Student
 - Admin can create and manage multiple-choice exams
