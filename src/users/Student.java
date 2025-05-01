@@ -52,4 +52,11 @@ public class Student extends User {
     public static boolean usernameExists(String username) {
         return allStudents.stream().anyMatch(s -> s.getUsername().equalsIgnoreCase(username));
     }
+
+    @SuppressWarnings("unchecked")
+    public static void loadFromFile() throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(STUDENT_FILE))) {
+            allStudents = (ArrayList<Student>) ois.readObject();  // Now properly typed
+        }
+    }
 }
