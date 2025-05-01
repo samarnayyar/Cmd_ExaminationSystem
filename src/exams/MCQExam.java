@@ -1,14 +1,26 @@
 package exams;
 
-import users.*;
-import java.util.*;
-import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.io.Serializable;
+import java.io.FileWriter;
+import java.io.IOException;
+
+// Swing/AWT imports
+import javax.swing.*;
+import java.awt.*;
+import java.util.Enumeration;
+import javax.swing.AbstractButton;
+
+import users.Student;
 
 public class MCQExam implements Serializable {
     public static class Question implements Serializable {
-        private String text;
-        private String[] options;
-        private int correctAnswer;
+        public String text;
+        public String[] options;
+        public int correctAnswer;
 
         public Question(String text, String[] options, int correctAnswer) {
             this.text = text;
@@ -41,78 +53,107 @@ public class MCQExam implements Serializable {
         this.results = new ArrayList<>();
     }
 
-    public String getName() { return name; }
-    public String getId() { return id; }
+    // [Keep all your existing methods unchanged]
+    // Only the imports and package declaration were the issues
 
+    public void conductExam(Student student) {
+        JFrame examFrame = new JFrame("Exam: " + name);
+        examFrame.setSize(600, 500);
+        examFrame.setLocationRelativeTo(null);
+    
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        JTextArea questionArea = new JTextArea();
+        questionArea.setEditable(false);
+        questionArea.setLineWrap(true);
+        questionArea.setWrapStyleWord(true);
+    
+        JPanel optionsPanel = new JPanel(new GridLayout(0, 1));
+        ButtonGroup optionGroup = new ButtonGroup();
+    
+        JButton submitButton = new JButton("Submit Answer");
+        AtomicInteger score = new AtomicInteger(0);
+        AtomicInteger currentQuestion = new AtomicInteger(0);
+        List<Integer> selectedAnswers = new ArrayList<>();
+    
+        // Initialize with empty answers
+        for (int i = 0; i < questions.size(); i++) {
+            selectedAnswers.add(-1);
+        }
+    
+        // Show first question
+        showQuestion(currentQuestion.get(), questionArea, optionsPanel, optionGroup, selectedAnswers);
+    
+        submitButton.addActionListener(e -> {
+            // Get selected answer
+            int selectedIndex = -1;
+            for (Enumeration<AbstractButton> buttons = optionGroup.getElements(); buttons.hasMoreElements();) {
+                AbstractButton button = buttons.nextElement();
+                if (button.isSelected()) {
+                    selectedIndex = optionsPanel.getComponentZOrder(button);
+                    break;
+                }
+            }
+        
+            // Store answer
+            selectedAnswers.set(currentQuestion.get(), selectedIndex);
+        
+            // Check if correct
+            if (selectedIndex == questions.get(currentQuestion.get()).correctAnswer) {
+                score.incrementAndGet();
+            }
+        
+            // Move to next question or finish
+            if (currentQuestion.incrementAndGet() < questions.size()) {
+                optionsPanel.removeAll();
+                optionGroup.clearSelection();
+                showQuestion(currentQuestion.get(), questionArea, optionsPanel, optionGroup, selectedAnswers);
+                examFrame.revalidate();
+                examFrame.repaint();
+            } else {
+                results.add(new String[]{student.getUsername(), String.valueOf(score.get())});
+                JOptionPane.showMessageDialog(examFrame, 
+                    "Exam completed! Score: " + score.get() + "/" + questions.size());
+                examFrame.dispose();
+            }
+        });
+    
+        mainPanel.add(new JScrollPane(questionArea), BorderLayout.NORTH);
+        mainPanel.add(optionsPanel, BorderLayout.CENTER);
+        mainPanel.add(submitButton, BorderLayout.SOUTH);
+    
+        examFrame.add(mainPanel);
+        examFrame.setVisible(true);
+    }
+
+    private void showQuestion(int index, JTextArea area, JPanel panel, ButtonGroup group, List<Integer> selectedAnswers) {
+        Question q = questions.get(index);
+        area.setText("Question " + (index+1) + " of " + questions.size() + ":\n" + q.text + "\n\nSelect one option:");
+    
+        for (int i = 0; i < q.options.length; i++) {
+            JRadioButton option = new JRadioButton((i+1) + ". " + q.options[i]);
+            group.add(option);
+            panel.add(option);
+        
+            // Select previously chosen answer if exists
+            if (selectedAnswers.get(index) == i) {
+                option.setSelected(true);
+            }
+        }
+    }
+
+    // In MCQExam.java
     public void addQuestion(String text, String[] options, int correctAnswer) {
         questions.add(new Question(text, options, correctAnswer));
     }
 
-    public void addNewQuestionFromInput(Scanner scanner) {
-        System.out.print("\nEnter question text: ");
-        String text = scanner.nextLine();
-        
-        System.out.print("How many options? ");
-        int optionCount = Integer.parseInt(scanner.nextLine());
-        String[] options = new String[optionCount];
-        
-        for (int i = 0; i < optionCount; i++) {
-            System.out.print("Enter option " + (i+1) + ": ");
-            options[i] = scanner.nextLine();
-        }
-        
-        System.out.print("Enter correct option number (1-" + optionCount + "): ");
-        int correctAnswer = Integer.parseInt(scanner.nextLine()) - 1;
-        
-        addQuestion(text, options, correctAnswer);
-        System.out.println("Question added successfully!");
-    }
-
-    public void conductExam(Student student) {
-        Scanner scanner = new Scanner(System.in);
-        int score = 0;
-        
-        System.out.println("\nStarting Exam: " + name);
-        for (Question q : questions) {
-            q.display();
-            System.out.print("Your answer (1-" + q.options.length + "): ");
-            try {
-                int answer = scanner.nextInt();
-                if (q.isCorrect(answer)) score++;
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input, Next question..");
-                scanner.nextLine();
-            }
-        }
-        
-        results.add(new String[]{student.getUsername(), String.valueOf(score)});
-        saveResultsToFile(student.getUsername(), score);
-        System.out.println("\nExam completed! Your score: " + score + "/" + questions.size());
-    }
-
-    private void saveResultsToFile(String username, int score) {
-        try (FileWriter writer = new FileWriter(RESULTS_FILE, true)) {
-            writer.write("Exam: " + name + ", Student: " + username + ", Score: " + score + "/" + questions.size() + "\n");
-        } catch (IOException e) {
-            System.out.println("Error saving results: " + e.getMessage());
-        }
-    }
-
-    public void showResults() {
-        System.out.println("\nExam Results for " + name + ":");
+    public String getResultsAsString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Exam Results for ").append(name).append(":\n");
         for (String[] result : results) {
-            System.out.println("Student: " + result[0] + " - Score: " + result[1] + "/" + questions.size());
+            sb.append("Student: ").append(result[0])
+            .append(" - Score: ").append(result[1])
+            .append("/").append(questions.size()).append("\n");
         }
+        return sb.toString();
     }
-
-    public void showQuestions() {
-        System.out.println("\nExam: " + name);
-        for (int i = 0; i < questions.size(); i++) {
-            System.out.println("\nQ" + (i+1) + ": " + questions.get(i).text);
-            for (int j = 0; j < questions.get(i).options.length; j++) {
-                System.out.println("  " + (j+1) + ". " + questions.get(i).options[j]);
-            }
-            System.out.println("  Correct Answer: " + (questions.get(i).correctAnswer+1));
-        }
-    }
-}
+}   

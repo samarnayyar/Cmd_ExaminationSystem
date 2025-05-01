@@ -18,10 +18,8 @@ public class User implements Authenticable, Displayable, Serializable {
             this.password = password;
         }
 
-        public String getUsername(){ 
-            return username;}
-        public String getPassword(){ 
-            return password;}
+        public String getUsername() { return username; }
+        public String getPassword() { return password; }
     }
 
     protected Credentials credentials;
@@ -31,16 +29,17 @@ public class User implements Authenticable, Displayable, Serializable {
     }
 
     @Override
-    public boolean login(String username, String password){
-        return credentials.getUsername().equalsIgnoreCase(username) && credentials.getPassword().equals(password);
+    public boolean login(String username, String password) {
+        return credentials.getUsername().equalsIgnoreCase(username) && 
+               credentials.getPassword().equals(password);
     }
 
     @Override
-    public void displayInfo(){
+    public void displayInfo() {
         System.out.println("User: " + credentials.getUsername());
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return credentials.getUsername();
     }
 }
