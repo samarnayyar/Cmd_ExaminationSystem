@@ -1,14 +1,26 @@
 # Online Examination System
 
-This project is a console-based Online Examination System built in Java. It streamlines the exam process by providing separate functionalities for admins and students, supporting secure logins, question management, and instant result generation in a clean, modular structure.
+![Java](https://img.shields.io/badge/Java-17-blue)
+![Swing](https://img.shields.io/badge/GUI-Swing-orange)
+
+This project is a console-based Online Examination System built in Java. It is a complete examination system featuring a modern Swing GUI, with separate interfaces for administrators and students, secure authentication, and automatic scoring.
 
 ## Features
 
-- Secure login system for Admin and Student
-- Admin can create and manage multiple-choice exams
-- Student can attempt exams and get instant results
-- Automatic evaluation and scoring
-- Modular design using packages and OOP principles
+### **User Management**
+- Secure login/registration for both Students and Admins
+- Role-based access control
+- Data persistence using serialization
+
+### **Exam System**
+- Interactive GUI for taking tests (MCQExam.java)
+- Real-time question navigation
+- Instant scoring and results
+
+### **Admin Controls**
+- Create/update exams (AdminDashboard.java)
+- Add multiple-choice questions
+- View student performances
 
 ## 📁 Project Structure
 
@@ -24,12 +36,26 @@ FinalProject/
 │   ├── Admin.java
 │   └── Student.java
 └── main/
+    └── AdminDashboard.java
+    └── LoginWindow.java
     └── OnlineExamSystem.java
+    └── RegisterationWindow.java
+    └── StudentDashboard.java
 ```
-## 🛠 Technologies Used
-  - Java
-  - OOP Concepts (Inheritance, Interfaces, Encapsulation)
-  - Package-based structure
+## 🛠️ Technologies Used
+
+### Fundamental Components
+| Technology | Usage |
+|------------|-------|
+| **Java 17** | Main programming language |
+| **Java Swing** | GUI framework for all interfaces |
+| **OOP Principles** | Inheritance, Encapsulation, Polymorphism |
+| **Serialization** | Persistent data storage (users/exams) |
+
+### Key Implementations
+- **Swing Components**: `JFrame`, `JPanel`, `JOptionPane`, `ButtonGroup`
+- **Layout Managers**: `BorderLayout`, `GridLayout`, `FlowLayout`
+- **Event Handling**: `ActionListener`, `WindowAdapter`
 
 ## 🚀 How to Run
 
